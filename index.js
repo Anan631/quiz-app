@@ -65,4 +65,49 @@ class Quiz {
     // Clear saved answers after finishing
     localStorage.removeItem('quiz-answers');
   }
+  
+  render() {
+    const container = document.getElementById('quiz-container');
+    container.innerHTML = '';
+
+    this.questions.forEach(q => {
+      const div = document.createElement('div');
+      div.classList.add('question');
+      div.innerHTML = `<p>${q.text}</p>`;
+      
+      const optionsDiv = document.createElement('div');
+      optionsDiv.classList.add('options');
+
+      q.options.forEach(option => {
+        const id = `${q.id}-${option}`;
+        const checked = this.answers[q.id] === option ? 'checked' : '';
+        optionsDiv.innerHTML += `
+          <label>
+            <input type="radio" name="${q.id}" value="${option}" ${checked}>
+            ${option}
+          </label>
+        `;
+      });
+
+      div.appendChild(optionsDiv);
+      container.appendChild(div);
+    });
+
+    // Attach event listeners for inputs
+    this.questions.forEach(q => {
+      const inputs = document.getElementsByName(q.id);
+      inputs.forEach(input => {
+        input.addEventListener('change', e => {
+          this.handleChange(q.id, e.target.value);
+        });
+      });
+    });
+  }
 }
+const quiz = new Quiz(questions);
+quiz.render();
+
+document.getElementById('reset-btn').addEventListener('click', () => quiz.reset());
+document.getElementById('submit-btn').addEventListener('click', () => quiz.submit());
+
+    
