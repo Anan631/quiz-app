@@ -19,3 +19,50 @@ const questions = [
   new Question(9, "The largest ocean in the world is the Atlantic Ocean.", ["True", "False"], "False"),
   new Question(10,"Pinocchio” is the shortest Disney film. ", ["True", "False"], "False"),
 ];
+
+class Quiz {
+  constructor(questions) {
+    this.questions = questions;
+    this.answers = {}; // user answers
+    this.loadAnswers();
+  }
+
+  loadAnswers() {
+    const savedAnswers = JSON.parse(localStorage.getItem('quiz-answers'));
+    if (savedAnswers) {
+      this.answers = savedAnswers;
+    }
+  }
+
+  saveAnswers() {
+    localStorage.setItem('quiz-answers', JSON.stringify(answers));
+  }
+
+  reset() {
+    this.answers = {};
+    localStorage.removeItem('quiz-answers');
+  }
+
+  handleChange(questionId, value) {
+    this.answers[questionId] = value;
+    this.saveAnswers();
+  }
+
+  calculateScore() {
+    let score = 0;
+    this.questions.forEach(q => {
+      if (this.answers[q.id] === q.correctAnswer) score++;
+    });
+    return score;
+  }
+  submit() {
+    const score = this.calculateScore();
+    const total = this.questions.length;
+    const percentage = (score / total) * 100;
+    const passed = percentage >= 70;
+    document.getElementById('result').textContent = 
+      `Score: ${score}/${total} - ${passed ? 'Passed ✅' : 'Failed ❌'}`;
+    // Clear saved answers after finishing
+    localStorage.removeItem('quiz-answers');
+  }
+}
