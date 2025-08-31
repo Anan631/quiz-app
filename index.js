@@ -35,12 +35,14 @@ class Quiz {
   }
 
   saveAnswers() {
-    localStorage.setItem('quiz-answers', JSON.stringify(answers));
+    localStorage.setItem('quiz-answers', JSON.stringify(this.answers));
   }
 
   reset() {
     this.answers = {};
     localStorage.removeItem('quiz-answers');
+        this.render();
+        document.getElementById('result').textContent = '';
   }
 
   handleChange(questionId, value) {
